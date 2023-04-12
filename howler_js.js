@@ -6,43 +6,74 @@ const urls = [
   "https://biffzs.github.io/audio-files/goodbye_blue_sky_17-Soprano-Soprano.mp3"
 ];
 
-
 const sounds = [];
 let loadedSounds = 0;
 
-// Load all sounds
-urls.forEach((url, index) => {
-  const sound = new Howl({
-    src: url,
-    html5: true,
-    onload: function() {
-      loadedSounds++;
-      console.log(`Sound ${index} loaded`);
-      if (loadedSounds === urls.length) {
-        startProgram();
+document.getElementById("activate").addEventListener("click", function () {
+  // Load all sounds
+  urls.forEach((url, index) => {
+    const sound = new Howl({
+      src: url,
+      html5: true,
+      onload: function () {
+        loadedSounds++;
+        console.log(`Sound ${index} loaded`);
+        if (loadedSounds === urls.length) {
+          startProgram();
+        }
+      },
+      onplayerror: function () {
+        console.log("HTML5 Audio pool exhausted, returning potentially locked audio object.");
       }
-    },
-    onplayerror: function() {
-      console.log("HTML5 Audio pool exhausted, returning potentially locked audio object.");
-    }
+    });
+    sounds.push(sound);
   });
-  sounds.push(sound);
 });
 
 
 
 function startProgram() {
-  var context;
-  
-  document.addEventListener("click", function() {
-    context = new (window.AudioContext || window.webkitAudioContext)();
-    sounds.forEach(sound => {
-      sound.play();
+
+  document.getElementById("play").addEventListener("click", () => {
+    if (sounds[0].playing()) {
+
+      sounds.forEach(sound => {
+        sound.pause();
+      });
       
+    } else {
+
+      let elapsedTime = 0;
+      // Play all sounds at once
+      sounds.forEach(sound => {
+        sound.play();
+      });
+
+      setTimeout(() => {
+        elapsedTime = sounds[0].seek();
+        sounds.forEach(sound => {
+          sound.seek(elapsedTime);
+        });
+      }, 50); // delay in milliseconds
+    }
+
+  });
+
+  document.getElementById("stop").addEventListener("click", () => {
+
+    // Play all sounds at once
+    sounds.forEach(sound => {
+      sound.stop();
     });
+
   });
 
 }
+
+
+
+
+
 
 
 
