@@ -1,0 +1,28 @@
+{
+  "src": [
+    "goodbye_blue_sky.webm",
+    "goodbye_blue_sky.mp3"
+  ],
+  "sprite": {
+    "goodbye_blue_sky_17-Click": [
+      0,
+      149748.0045351474
+    ],
+    "goodbye_blue_sky_17-Soprano-Alto": [
+      151000,
+      149748.0045351474
+    ],
+    "goodbye_blue_sky_17-Soprano-Bass": [
+      302000,
+      149748.0045351474
+    ],
+    "goodbye_blue_sky_17-Soprano-Soprano": [
+      453000,
+      149748.0045351474
+    ],
+    "goodbye_blue_sky_17-Soprano-Tenor": [
+      604000,
+      149748.0045351474
+    ]
+  }
+}

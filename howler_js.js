@@ -1,20 +1,25 @@
 const urls = [
-  "https://biffzs.github.io/audio-files/goodbye_blue_sky_17-Click.mp3",
-  "https://biffzs.github.io/audio-files/goodbye_blue_sky_17-Soprano-Bass.mp3",
-  "https://biffzs.github.io/audio-files/goodbye_blue_sky_17-Soprano-Tenor.mp3",
-  "https://biffzs.github.io/audio-files/goodbye_blue_sky_17-Soprano-Alto.mp3",
-  "https://biffzs.github.io/audio-files/goodbye_blue_sky_17-Soprano-Soprano.mp3"
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Click.mp3",
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Bass.mp3",
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Tenor.mp3",
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Alto.mp3",
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Soprano.mp3"
 ];
+
+const playBtn = document.querySelector('#play');
+const stopBtn = document.querySelector('#stop');
+const activateBtn = document.querySelector('#activate');
 
 const sounds = [];
 let loadedSounds = 0;
 
-document.getElementById("activate").addEventListener("click", function () {
+activateBtn.addEventListener("click", function () {
   // Load all sounds
   urls.forEach((url, index) => {
     const sound = new Howl({
       src: url,
-      html5: true,
+      preload: true,
+      //html5: true,
       onload: function () {
         loadedSounds++;
         console.log(`Sound ${index} loaded`);
@@ -34,13 +39,46 @@ document.getElementById("activate").addEventListener("click", function () {
 
 function startProgram() {
 
+
+
+
+  // // Add an event listener to the play button to start or pause the sound
+  // playBtn.addEventListener('click', () => {
+
+  //   if (Howler.ctx.state === 'suspended') {
+  //     Howler.ctx.resume();
+  //   }
+  //   if (Howler._muted) {
+  //     Howler.unmute();
+  //   }
+  //   if (Howler._muted) {
+  //     alert("Please unmute your browser to use this app.");
+  //     return;
+  //   }
+  //   if (Howler._autoSuspend) {
+  //     Howler._autoSuspend = false;
+  //   }
+
+  //   if (Howler._suspendTimer) {
+  //     clearTimeout(Howler._suspendTimer);
+  //     Howler._suspendTimer = null;
+  //   }
+  //   if (Howler.ctx && Howler.ctx.state === 'suspended') {
+  //     Howler.ctx.resume();
+  //   }
+    
+  // });
+
+
+
+
   document.getElementById("play").addEventListener("click", () => {
     if (sounds[0].playing()) {
 
       sounds.forEach(sound => {
         sound.pause();
       });
-      
+
     } else {
 
       let elapsedTime = 0;
@@ -49,12 +87,16 @@ function startProgram() {
         sound.play();
       });
 
-      setTimeout(() => {
-        elapsedTime = sounds[0].seek();
-        sounds.forEach(sound => {
-          sound.seek(elapsedTime);
-        });
-      }, 50); // delay in milliseconds
+      elapsedTime = sounds[0].seek();
+      sounds.forEach(sound => {
+        sound.seek(elapsedTime);
+      });
+      // setTimeout(() => {
+      //   elapsedTime = sounds[0].seek();
+      //   sounds.forEach(sound => {
+      //     sound.seek(elapsedTime);
+      //   });
+      // }, 50); // delay in milliseconds
     }
 
   });
