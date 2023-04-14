@@ -6,46 +6,17 @@ const urls = [
   "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Soprano.mp3"
 ];
 
-var goodbye_blue_sky = new Howl({
-  "src": [
-    "./audio/goodbye_blue_sky.webm",
-    "./audio/goodbye_blue_sky.mp3"
-  ],
-  "sprite": {
-    "goodbye_blue_sky_17-Click": [
-      0,
-      149748.0045351474
-    ],
-    "goodbye_blue_sky_17-Soprano-Alto": [
-      151000,
-      149748.0045351474
-    ],
-    "goodbye_blue_sky_17-Soprano-Bass": [
-      302000,
-      149748.0045351474
-    ],
-    "goodbye_blue_sky_17-Soprano-Soprano": [
-      453000,
-      149748.0045351474
-    ],
-    "goodbye_blue_sky_17-Soprano-Tenor": [
-      604000,
-      149748.0045351474
-    ]
-  }
-});
-
-
-
 const playBtn = document.querySelector('#play');
 const stopBtn = document.querySelector('#stop');
 const activateBtn = document.querySelector('#activate');
-
+const volumeSliders = [];
 const sounds = [];
 var sound_sprite;
 let loadedSounds = 0;
+Howler.html5PoolSize=30; // It's because I play a lot of sounds
 
-activateBtn.addEventListener("click", function () {
+
+function activateSounds() {
   // Load all sounds
   urls.forEach((url, index) => {
     const sound = new Howl({
@@ -66,11 +37,185 @@ activateBtn.addEventListener("click", function () {
     });
     sounds.push(sound);
   });
-});
+  activateBtn.removeEventListener("click", activateSounds);
+  activateBtn.disabled = true; // disable the button
+}
 
+activateBtn.addEventListener("click", activateSounds);
 
 
 function startProgram() {
+
+  document.getElementById("play").addEventListener("click", () => {
+
+    let allPaused = true;
+
+    // Check if all sounds are paused
+    sounds.forEach(sound => {
+      if (sound.playing()) {
+        allPaused = false;
+        return;
+      }
+    });
+
+    // Play or pause sounds depending on their current state
+    var elapsedTime = sounds[0].seek()
+
+    console.log("Elapsed time: " + elapsedTime)
+    if (allPaused) {
+      sounds.forEach(sound => {
+        document.getElementById("play").textContent = "Pause";
+        sound.play();
+        sound.seek(elapsedTime);
+        console.log("Elapsed time: " + elapsedTime)
+      });
+    } else {
+      sounds.forEach(sound => {
+        document.getElementById("play").textContent = "Play";
+        sound.pause();
+        sound.seek(elapsedTime);
+        console.log("Elapsed time: " + elapsedTime)
+      });
+    }
+  });
+
+
+  document.getElementById("stop").addEventListener("click", () => {
+    // Play all sounds at once
+    document.getElementById("play").textContent = "Play";
+    sounds.forEach(sound => {
+      sound.stop();
+    });
+  });
+
+
+  // Add event listeners to the fader elements
+  sounds.forEach((sound, index) => {
+    const volumeSlider = document.createElement('input');
+    volumeSlider.type = 'range';
+    volumeSlider.min = 0.001;
+    volumeSlider.max = 1.001;
+    volumeSlider.step = 0.2;
+    volumeSlider.value = 1;
+    volumeSlider.id = 'volume-slider'
+
+    const parts = sound._src.split("/");
+    const fileNameWithEnding = parts.pop();
+    const fileNameWithoutEnding = fileNameWithEnding.split(".")[0];
+
+    // Add the slider to the DOM
+    const label = document.createElement('label');
+    label.textContent = index + ` Volume`;
+    label.appendChild(volumeSlider);
+    label.classList.add('text-rotated'); // Add the 'my-label' class to the label
+    document.body.appendChild(label);
+
+    // Add the slider to the volumeSliders array
+    volumeSliders.push(volumeSlider);
+
+    // Add an event listener to the slider to update the player's volume
+    volumeSlider.addEventListener('input', () => {
+      const newVolume = parseFloat(volumeSlider.value);
+      sound.volume(newVolume);
+    });
+
+
+
+  });
+
+
+  var max_duration = sounds[0].duration();
+  var loopId
+  sounds[0].on('play', function () {
+    loopId = setInterval(function () {
+      timeline.value = sounds[0].seek() * 100 / max_duration;
+    }, 16);
+  });
+
+  // Stop the loop when the sound file ends
+  sounds[0].on('end', function() {
+    clearInterval(loopId);
+  });
+
+
+  timeline.addEventListener('mousedown', function() {
+    // Clear the loop when the timeline is clicked
+    clearInterval(loopId);
+  });
+
+  timeline.addEventListener('mouseup', function() {
+    loopId = setInterval(function () {
+      timeline.value = sounds[0].seek() * 100 / max_duration;
+    }, 16);
+  });
+
+  timeline.addEventListener('input', () => {
+    const seekTime = parseFloat(timeline.value);
+    timeline.value = sounds[0].seek() * 100 / max_duration;
+    sounds.forEach((sound, index) => {
+      sound.seek(seekTime);
+    });
+  });
+
+  var speedSlider = document.getElementById('speed');
+  speedSlider.addEventListener('input', function() {
+    var speed = parseFloat(speedSlider.value);
+    sounds.forEach((sound, index) => {
+      sound.rate(speed);
+    });
+  });
+  // //Update the timeline slider as the file plays
+  // Tone.Transport.scheduleRepeat(() => {
+  //   timeline.value = Tone.Transport.seconds * 100 / max_duration;
+  // }, "16n");
+
+  // // Add an event listener to the timeline slider to seek to a specific time in the file
+  // timeline.addEventListener('input', () => {
+  //   Tone.Transport.seconds = max_duration * (timeline.value / 100);
+  // });
+
+
+
+
+
+
+
+
+
+
+  // // Loop through the players array and create a volume slider for each player
+  // players.forEach((player, index) => {
+  //   const volumeSlider = document.createElement('input');
+  //   volumeSlider.type = 'range';
+  //   volumeSlider.min = -60;
+  //   volumeSlider.max = 0;
+  //   volumeSlider.step = 12;
+  //   volumeSlider.value = 0;
+  //   volumeSlider.id = 'volume-slider'
+
+  //   // Add the slider to the DOM
+  //   const label = document.createElement('label');
+  //   label.textContent = `File ${index + 1} Volume: `;
+  //   label.appendChild(volumeSlider);
+  //   document.body.appendChild(label);
+
+  //   // Add the slider to the volumeSliders array
+  //   volumeSliders.push(volumeSlider);
+
+  //   // Add an event listener to the slider to update the player's volume
+  //   volumeSlider.addEventListener('input', () => {
+  //     volumes[index].volume.value = volumeSlider.valueAsNumber
+  //   });
+  //   player.sync().start(0);
+  // });
+
+
+
+
+
+}
+
+
 
   //   // // Add an event listener to the play button to start or pause the sound
   //   // playBtn.addEventListener('click', () => {
@@ -99,84 +244,55 @@ function startProgram() {
 
   //   // });
 
-  document.getElementById("play2").addEventListener("click", () => {
 
+//   if (sounds[0].playing()) {
 
+//     sounds.forEach(sound => {
+//       sound.pause();
+//     });
 
-    if (document.getElementById("play2").textContent == "Play2") {
-      document.getElementById("play2").textContent = "Pause2";
-      goodbye_blue_sky.play()
-      // for (let spriteName in goodbye_blue_sky._sprite) {
-      //   goodbye_blue_sky.play(spriteName)
-      // }
-    } else {
-      goodbye_blue_sky.pause()
-      // for (let spriteName in goodbye_blue_sky._sprite) {
-      //   goodbye_blue_sky.pause(spriteName)
-      // }
-    }
+//   }
+//         document.getElementById("play").addEventListener("click", () => {
+//           if (sounds[0].playing()) {
 
+//             sounds.forEach(sound => {
+//               sound.pause();
+//             });
 
+//           } else {
 
+//             let elapsedTime = 0;
+//             // Play all sounds at once
+//             sounds.forEach(sound => {
+//               sound.play();
+//             });
 
-  });
+//             elapsedTime = sounds[0].seek();
+//             sounds.forEach(sound => {
+//               sound.seek(elapsedTime);
+//             });
+//             // setTimeout(() => {
+//             //   elapsedTime = sounds[0].seek();
+//             //   sounds.forEach(sound => {
+//             //     sound.seek(elapsedTime);
+//             //   });
+//             // }, 50); // delay in milliseconds
+//           }
 
+//         });
 
-  // goodbye_blue_sky.pause("goodbye_blue_sky_17-Soprano-Alto")
-  // goodbye_blue_sky.pause("goodbye_blue_sky_17-Soprano-Bass")
-  // goodbye_blue_sky.pause("goodbye_blue_sky_17-Soprano-Soprano")
-  // goodbye_blue_sky.pause("goodbye_blue_sky_17-Soprano-Tenor")
+//         document.getElementById("stop").addEventListener("click", () => {
 
+//           // Play all sounds at once
+//           sounds.forEach(sound => {
+//             sound.stop();
+//           });
 
+//         });
 
-  // if (sounds[0].playing()) {
+//       }
 
-  //   sounds.forEach(sound => {
-  //     sound.pause();
-  //   });
-
-  // }
-  //       document.getElementById("play").addEventListener("click", () => {
-  //         if (sounds[0].playing()) {
-
-  //           sounds.forEach(sound => {
-  //             sound.pause();
-  //           });
-
-  //         } else {
-
-  //           let elapsedTime = 0;
-  //           // Play all sounds at once
-  //           sounds.forEach(sound => {
-  //             sound.play();
-  //           });
-
-  //           elapsedTime = sounds[0].seek();
-  //           sounds.forEach(sound => {
-  //             sound.seek(elapsedTime);
-  //           });
-  //           // setTimeout(() => {
-  //           //   elapsedTime = sounds[0].seek();
-  //           //   sounds.forEach(sound => {
-  //           //     sound.seek(elapsedTime);
-  //           //   });
-  //           // }, 50); // delay in milliseconds
-  //         }
-
-  //       });
-
-  //       document.getElementById("stop").addEventListener("click", () => {
-
-  //         // Play all sounds at once
-  //         sounds.forEach(sound => {
-  //           sound.stop();
-  //         });
-
-  //       });
-
-  //     }
-
-}
+// }
 
 
 // const buffers = [];

@@ -9,6 +9,10 @@
   <script src="vendor/howler/dist/howler.min.js"></script>
   <!-- <link rel="stylesheet" href="style.css"> -->
   <style>
+    .text-rotated {
+      transform: rotate(90deg);
+    }
+
     #volume-slider {
       writing-mode: bt-lr;
       /* IE */
@@ -48,6 +52,7 @@
   </div>
   <div>
     <button id="play">Play</button>
+    <!-- <button id="play2">Play2</button> -->
     <button id="stop">Stop</button>
   </div>
   <div>
@@ -58,49 +63,32 @@
     <input type="range" id="timeline" min="0" max="100" step="1" value="0">
   </div>
   <div class="slider-multithumb">
-    <svg role="none"
-         class="slider-group"
-         width="360"
-         height="60">
+    <svg role="none" class="slider-group" width="360" height="60">
       <g aria-hidden="true" class="rail">
         <rect height="0" width="0"></rect>
       </g>
       <g aria-hidden="true" class="range">
         <rect height="0" width="0"></rect>
       </g>
-      <g class="minimum"
-         role="slider"
-         tabindex="0"
-         aria-valuemin="0"
-         aria-valuenow="100"
-         aria-valuemax="250"
-         aria-label="Hotel Minimum Price in US dollars">
+      <g class="minimum" role="slider" tabindex="0" aria-valuemin="0" aria-valuenow="100" aria-valuemax="250"
+        aria-label="Hotel Minimum Price in US dollars">
         <text class="value">
           0
         </text>
-        <rect class="focus-ring"
-              height="0"
-              width="0"></rect>
+        <rect class="focus-ring" height="0" width="0"></rect>
         <polygon class="thumb" points="0,0 0,0"></polygon>
       </g>
-      <g class="maximum"
-         role="slider"
-         tabindex="0"
-         aria-valuemin="100"
-         aria-valuenow="250"
-         aria-valuemax="400"
-         aria-label="Hotel Maximum Price in US dollars">
+      <g class="maximum" role="slider" tabindex="0" aria-valuemin="100" aria-valuenow="250" aria-valuemax="400"
+        aria-label="Hotel Maximum Price in US dollars">
         <text class="value">
           0
         </text>
-        <rect class="focus-ring"
-              height="0"
-              width="0"></rect>
+        <rect class="focus-ring" height="0" width="0"></rect>
         <polygon class="thumb" points="0,0 0,0"></polygon>
       </g>
     </svg>
   </div>
-  <script src="howler_js.js"></script>
+  <script src="howler.js"></script>
 
 
 
