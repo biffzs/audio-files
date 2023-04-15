@@ -128,7 +128,16 @@ function startProgram() {
   var loopId
   sounds[0].on('play', function () {
     loopId = setInterval(function () {
-      timeline.value = sounds[0].seek() * 100 / max_duration;
+      const seek_time_ref = sounds[0].seek()
+      timeline.value = seek_time_ref * 100 / max_duration;
+
+      sounds.forEach((sound, index) => {
+        // console.log("diff time: " + Math.abs(seek_time_ref - sound.seek()))
+        if (Math.abs(seek_time_ref - sound.seek()) > 0.03) {
+          sound.seek(seek_time_ref)
+        }
+      });
+
     }, 16);
   });
 
@@ -138,24 +147,32 @@ function startProgram() {
   });
 
 
-  timeline.addEventListener('mousedown', function() {
-    // Clear the loop when the timeline is clicked
-    clearInterval(loopId);
-  });
+  // timeline.addEventListener('mousedown', function() {
+  //   // Clear the loop when the timeline is clicked
+  //   clearInterval(loopId);
+  // });
 
-  timeline.addEventListener('mouseup', function() {
-    loopId = setInterval(function () {
-      timeline.value = sounds[0].seek() * 100 / max_duration;
-    }, 16);
-  });
+  // timeline.addEventListener('mouseup', function() {
+  //   loopId = setInterval(function () {
+  //     const seek_time_ref = sounds[0].seek()
+  //     timeline.value = seek_time_ref * 100 / max_duration;
 
-  timeline.addEventListener('input', () => {
-    const seekTime = parseFloat(timeline.value);
-    timeline.value = sounds[0].seek() * 100 / max_duration;
-    sounds.forEach((sound, index) => {
-      sound.seek(seekTime);
-    });
-  });
+  //     sounds.forEach((sound, index) => {
+  //       console.log("diff time: " + abs(seek_time_ref - sound.seek()))
+  //       if (abs(seek_time_ref - sound.seek()) > 0.001) {
+  //         sound.seek(seek_time_ref)
+  //       }
+  //     });
+  //   }, 16);
+  // });
+
+  // timeline.addEventListener('input', () => {
+  //   const seekTime = parseFloat(timeline.value);
+  //   timeline.value = sounds[0].seek() * 100 / max_duration;
+  //   sounds.forEach((sound, index) => {
+  //     sound.seek(seekTime);
+  //   });
+  // });
 
   var speedSlider = document.getElementById('speed');
   speedSlider.addEventListener('input', function() {
@@ -164,6 +181,9 @@ function startProgram() {
       sound.rate(speed);
     });
   });
+
+
+
   // //Update the timeline slider as the file plays
   // Tone.Transport.scheduleRepeat(() => {
   //   timeline.value = Tone.Transport.seconds * 100 / max_duration;
