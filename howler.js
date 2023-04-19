@@ -23,6 +23,7 @@ function activateSounds() {
       src: url,
       preload: true,
       html5: true,
+      buffer: 8192, // custom buffer size in bytes
       onload: function () {
         loadedSounds++;
         console.log(`Sound ${index} loaded`);
@@ -123,23 +124,49 @@ function startProgram() {
 
   });
 
+  var isDragging = false; // variable to track if the user is dragging the timeline
 
+  // update timeline
   var max_duration = sounds[0].duration();
-  var loopId
+  var loopId;
   sounds[0].on('play', function () {
     loopId = setInterval(function () {
-      const seek_time_ref = sounds[0].seek()
-      timeline.value = seek_time_ref * 100 / max_duration;
-
+      if (!isDragging) { // only update the timeline if the user is not dragging it
+        const seek_time_ref = sounds[0].seek();
+        timeline.value = seek_time_ref * 100 / max_duration;
+      }
+  
+      // try disabling de-sync
       sounds.forEach((sound, index) => {
         // console.log("diff time: " + Math.abs(seek_time_ref - sound.seek()))
         if (Math.abs(seek_time_ref - sound.seek()) > 0.03) {
-          sound.seek(seek_time_ref)
+          sound.seek(seek_time_ref);
         }
       });
-
+  
     }, 16);
   });
+  
+  timeline.addEventListener('mousedown', () => {
+    isDragging = true; // user started dragging the timeline
+  });
+  
+  timeline.addEventListener('mouseup', () => {
+    isDragging = false; // user stopped dragging the timeline
+  });
+  
+  timeline.addEventListener('input', () => {
+    var max_duration = sounds[0].duration();
+    const seekTime = (parseFloat(timeline.value) / 100) * max_duration; // between 0 and 100%
+    //timeline.value = sounds[0].seek() / max_duration;
+    console.log("Seek time = " + seekTime);
+    console.log("Max duration = " + max_duration);
+    sounds.forEach((sound, index) => {
+      sound.seek(seekTime);
+    });
+  });
+  
+
 
   // Stop the loop when the sound file ends
   sounds[0].on('end', function() {
@@ -166,13 +193,7 @@ function startProgram() {
   //   }, 16);
   // });
 
-  // timeline.addEventListener('input', () => {
-  //   const seekTime = parseFloat(timeline.value);
-  //   timeline.value = sounds[0].seek() * 100 / max_duration;
-  //   sounds.forEach((sound, index) => {
-  //     sound.seek(seekTime);
-  //   });
-  // });
+
 
   var speedSlider = document.getElementById('speed');
   speedSlider.addEventListener('input', function() {
