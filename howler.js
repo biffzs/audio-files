@@ -1,14 +1,16 @@
 const urls = [
-  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Click.mp3",
-  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Bass.mp3",
-  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Tenor.mp3",
-  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Alto.mp3",
-  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky_17-Soprano-Soprano.mp3"
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky/goodbye_blue_sky_17-Click.mp3",
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky/goodbye_blue_sky_17-Soprano-Bass.mp3",
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky/goodbye_blue_sky_17-Soprano-Tenor.mp3",
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky/goodbye_blue_sky_17-Soprano-Alto.mp3",
+  "https://biffzs.github.io/audio-files/audio/goodbye_blue_sky/goodbye_blue_sky_17-Soprano-Soprano.mp3"
 ];
 
 const playBtn = document.querySelector('#play');
 const stopBtn = document.querySelector('#stop');
 const activateBtn = document.querySelector('#activate');
+const loopToggleBtn = document.querySelector('#loopToggle');
+const syncBtn = document.querySelector('#sync');
 const volumeSliders = [];
 const sounds = [];
 let loadedSounds = 0;
@@ -17,10 +19,39 @@ Howler.html5PoolSize = 30; // It's because I play a lot of sounds
 let rangeMin = 5;
 const range = document.querySelector(".range-selected");
 const rangeInput = document.querySelectorAll(".range-input input");
+const range_style = document.querySelector('.range');
+range.style.left = "0%";
+range.style.right = "0%";
 
 var loop_left_perc = 0
 var loop_right_perc = 100
 var loop_enabled = true
+
+// Loop toggle button
+loopToggleBtn.addEventListener("click", () => {
+  const btnTxt = loopToggleBtn.textContent
+  const rangeSelected = document.querySelector('.range-selected');
+
+  if (loop_enabled) {
+    loop_enabled = false
+    loopToggleBtn.textContent = "Loop Off"
+    rangeSelected.style.backgroundColor = '#407ceb69';
+  } else {
+    loop_enabled = true
+    loopToggleBtn.textContent = "Loop On"
+    rangeSelected.style.backgroundColor = '#1b13c0';
+  }
+
+});
+
+// Loop toggle button
+syncBtn.addEventListener("click", () => {
+  sounds.forEach((sound, index) => {
+    if (Math.abs(seek_time_ref - sound.seek()) > 0.03) {
+      sound.seek(seek_time_ref);
+    }
+  });
+});
 
 
 rangeInput.forEach((input) => {
@@ -186,8 +217,6 @@ function startProgram() {
         });
       }
 
-
-
     }, 10);
   });
 
@@ -222,8 +251,6 @@ function startProgram() {
       sound.rate(speed);
     });
   });
-
-
 
 
 }

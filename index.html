@@ -1,141 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Howler.js Example V1.1</title>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script> -->
-  <script src="vendor/howler/dist/howler.min.js"></script>
-  <!-- <link rel="stylesheet" href="style.css"> -->
-  <style>
-    .text-rotated {
-      transform: rotate(90deg);
-    }
-
-    #volume-slider {
-      writing-mode: bt-lr;
-      /* IE */
-      -webkit-appearance: slider-vertical;
-      /* WebKit */
-      width: 20px;
-      height: 150px;
-      padding: 0 5px;
-    }
-
-    #volume-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      background-color: #4CAF50;
-      cursor: pointer;
-    }
-
-    #volume-slider::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      background-color: #4CAF50;
-      cursor: pointer;
-    }
-
-    /* looper */
-    .range-input {
-      position: relative;
-    }
-
-    .range-input input {
-      position: absolute;
-      /* width: 100%; */
-      width: 130px;
-      height: 5px;
-      top: -7px;
-      background: none;
-      pointer-events: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-    }
-
-    .range-input input::-webkit-slider-thumb {
-      height: 20px;
-      width: 20px;
-      border-radius: 50%;
-      border: 3px solid #1b53c0;
-      background-color: #fff;
-      pointer-events: auto;
-      -webkit-appearance: none;
-    }
-
-    .range-input input::-moz-range-thumb {
-      height: 15px;
-      width: 15px;
-      border-radius: 50%;
-      border: 3px solid #1b53c0;
-      background-color: #fff;
-      pointer-events: auto;
-      -moz-appearance: none;
-    }
-
-    .range-slider {
-      width: 130px;
-      height: 5px;
-      position: relative;
-      background-color: #e1e9f6;
-      border-radius: 2px;
-    }
-
-    .range-selected {
-      height: 100%;
-      left: 0%;
-      right: 100%;
-      position: absolute;
-      border-radius: 5px;
-      background-color: #1b53c0;
-    }
-  </style>
-
+  <title>Page 1</title>
 </head>
 
 <body>
-  <h1>Howler.js Example V1.1</h1>
+  <header>
+    <h1>My Website</h1>
+  </header>
+  <main>
+    <label for="song-select">Select a song:</label>
+    <select id="song-select">
+      <option value="">--Select a song--</option>
+      <option value="song1">Song 1</option>
+      <option value="song2">Song 2</option>
+      <option value="song3">Song 3</option>
+    </select>
+    <button id="continue-btn">Continue</button>
+  </main>
 
-  <pre id="content" style="white-space: pre-wrap;"></pre>
-
-  <div>
-    <button id="activate">>ACTIVATE</button>
-  </div>
-  <div>
-    <button id="play">Play</button>
-    <!-- <button id="play2">Play2</button> -->
-    <button id="stop">Stop</button>
-    <button id="sync">Sync</button>
-  </div>
-  <div>
-
-    <label for="speed">Speed Slider:</label>
-    <input type="range" id="speed" min="0.25" max="2" step="0.25" value="1">
-
-  </div>
-  <div>
-    <input type="range" id="timeline" min="0" max="100" step="1" value="0">
-  </div>
-
-  <!-- looper -->
-  <div class="range">
-    <div class="range-slider">
-      <span class="range-selected"></span>
-    </div>
-    <div class="range-input">
-      <input type="range" class="min" min="0" max="100" value="0" step="0.1">
-      <input type="range" class="max" min="0" max="100" value="100" step="0.1">
-    </div>
-  </div>
-
-  <script src="howler.js"></script>
-
-
-
-
+  <script>
+    document.getElementById("continue-btn").addEventListener("click", function () {
+      var song = document.getElementById("song-select").value;
+      if (song) {
+        window.location.href = "howler.html?song=" + encodeURIComponent(song);
+      }
+    });
+  </script>
 </body>
 
 </html>
