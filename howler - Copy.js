@@ -12,36 +12,23 @@ const activateBtn = document.querySelector('#activate');
 const volumeSliders = [];
 const sounds = [];
 let loadedSounds = 0;
-Howler.html5PoolSize = 30; // It's because I play a lot of sounds
+Howler.html5PoolSize=30; // It's because I play a lot of sounds
 
-let rangeMin = 5;
-const range = document.querySelector(".range-selected");
-const rangeInput = document.querySelectorAll(".range-input input");
-
-var loop_left_perc = 0
-var loop_right_perc = 100
-var loop_enabled = true
-
-
-rangeInput.forEach((input) => {
-  input.addEventListener("input", (e) => {
-    let minRange = parseInt(rangeInput[0].value);
-    let maxRange = parseInt(rangeInput[1].value);
-    if (maxRange - minRange < rangeMin) {     
-      if (e.target.className === "min") {
-        rangeInput[0].value = maxRange - rangeMin;        
-      } else {
-        rangeInput[1].value = minRange + rangeMin;        
-      }
-    } else {
-      range.style.left = (minRange / rangeInput[0].max) * 100 + "%";
-      range.style.right = 100 - (maxRange / rangeInput[1].max) * 100 + "%";
-    }
-    loop_left_perc = rangeInput[0].value
-    loop_right_perc = rangeInput[1].value
-  });
+// Create a single Howler object
+var all_sounds = new Howl({
+  src: urls,
+  preload: true,
+  html5: true,
+  buffer: 8192, // custom buffer size in bytes
+  loop: false,
+  volume: 1,
+  onload: function () {
+    startProgram();
+  },
+  onplayerror: function () {
+    console.log("HTML5 Audio pool exhausted, returning potentially locked audio object.");
+  }
 });
-
 
 
 function activateSounds() {
@@ -158,47 +145,30 @@ function startProgram() {
   var loopId;
   sounds[0].on('play', function () {
     loopId = setInterval(function () {
-      const seek_time_ref = sounds[0].seek();
       if (!isDragging) { // only update the timeline if the user is not dragging it
+        const seek_time_ref = sounds[0].seek();
         timeline.value = seek_time_ref * 100 / max_duration;
       }
-
-      // sync sound files again
+  
+      // try disabling de-sync
       sounds.forEach((sound, index) => {
         // console.log("diff time: " + Math.abs(seek_time_ref - sound.seek()))
         if (Math.abs(seek_time_ref - sound.seek()) > 0.03) {
           sound.seek(seek_time_ref);
         }
       });
-
-      // check for looping
-      if (!loop_enabled || isDragging) {
-        return;
-      }
-
-      const loop_right_abs = loop_right_perc * max_duration / 100
-      const loop_left_abs = loop_left_perc * max_duration / 100
-
-      if (seek_time_ref >= loop_right_abs) {
-        timeline.value = loop_left_abs
-        sounds.forEach((sound, index) => {
-          sound.seek(loop_left_abs);
-        });
-      }
-
-
-
-    }, 10);
+  
+    }, 16);
   });
-
+  
   timeline.addEventListener('mousedown', () => {
     isDragging = true; // user started dragging the timeline
   });
-
+  
   timeline.addEventListener('mouseup', () => {
     isDragging = false; // user stopped dragging the timeline
   });
-
+  
   timeline.addEventListener('input', () => {
     var max_duration = sounds[0].duration();
     const seekTime = (parseFloat(timeline.value) / 100) * max_duration; // between 0 and 100%
@@ -209,21 +179,18 @@ function startProgram() {
       sound.seek(seekTime);
     });
   });
-
+  
   // Stop the loop when the sound file ends
-  sounds[0].on('end', function () {
+  sounds[0].on('end', function() {
     clearInterval(loopId);
   });
 
   var speedSlider = document.getElementById('speed');
-  speedSlider.addEventListener('input', function () {
+  speedSlider.addEventListener('input', function() {
     var speed = parseFloat(speedSlider.value);
     sounds.forEach((sound, index) => {
       sound.rate(speed);
     });
   });
-
-
-
 
 }
