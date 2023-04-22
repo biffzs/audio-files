@@ -44,8 +44,9 @@ loopToggleBtn.addEventListener("click", () => {
 
 });
 
-// Loop toggle button
+// sync button
 syncBtn.addEventListener("click", () => {
+  const seek_time_ref = sounds[0].seek();
   sounds.forEach((sound, index) => {
     if (Math.abs(seek_time_ref - sound.seek()) > 0.03) {
       sound.seek(seek_time_ref);
