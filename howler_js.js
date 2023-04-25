@@ -1,8 +1,10 @@
+
 const playBtn = document.querySelector('#play');
 const stopBtn = document.querySelector('#stop');
 const activateBtn = document.querySelector('#activate');
 const syncBtn = document.querySelector('#sync');
 const deSyncBtn = document.querySelector('#de-sync');
+const loopToggleBtn = document.querySelector('#loopToggle');
 
 let loadedSounds = 0;
 var goodbye_blue_sky
@@ -55,7 +57,7 @@ function deSyncTracks() {
     const abs_pos_ref = seek_pos_ref - sprite_offset_ref;
 
 
-    goodbye_blue_sky.seek(abs_pos_ref + 200, ids[0]);
+    goodbye_blue_sky.seek(abs_pos_ref + 1.5, ids[0]);
 
     printTrackSyncStatus() 
   }
@@ -113,6 +115,22 @@ deSyncBtn.addEventListener('click', () => {
   deSyncTracks()
 });
 
+// Loop toggle button
+loopToggleBtn.addEventListener("click", () => {
+  const btnTxt = loopToggleBtn.textContent
+  const rangeSelected = document.querySelector('.range-selected');
+
+  if (loop_enabled) {
+    loop_enabled = false
+    loopToggleBtn.textContent = "Loop Off"
+    rangeSelected.style.backgroundColor = '#407ceb69';
+  } else {
+    loop_enabled = true
+    loopToggleBtn.textContent = "Loop On"
+    rangeSelected.style.backgroundColor = '#1b13c0';
+  }
+
+});
 
 rangeInput.forEach((input) => {
   input.addEventListener("input", (e) => {
@@ -132,6 +150,16 @@ rangeInput.forEach((input) => {
     loop_right_perc = rangeInput[1].value
   });
 });
+
+
+function seekTo(howl, seekTime) {
+  Object.entries(howl._sprite).forEach(([spriteName, spriteOffset], index) => {
+    let spriteOffsetSeconds = spriteOffset[0] / 1000;
+    howl.seek(seekTime + spriteOffsetSeconds, ids[index]);
+  });
+  return true; // Return true to indicate success
+}
+
 
 
 function activateSounds() {
@@ -233,7 +261,6 @@ goodbye_blue_sky.on('play', function () {
     }
 
     // TODO: Check if files are playing, even though they shouldn't, Check if all required files are playing correctly
-
     // // // sync sound files again
     // // sounds.forEach((sound, index) => {
     // //   // console.log("diff time: " + Math.abs(seek_time_ref - sound.seek()))
@@ -250,23 +277,16 @@ goodbye_blue_sky.on('play', function () {
     const loop_right_abs = loop_right_perc * max_duration / 100
     const loop_left_abs = loop_left_perc * max_duration / 100
 
-
- 
-
     if (seek_time_ref >= loop_right_abs) {
       timeline.value = loop_left_abs
 
       Object.entries(goodbye_blue_sky._sprite).forEach(([spriteName, spriteOffset], index) => {
-
         let sprite_offset = spriteOffset[0] / 1000;
         // let seek_pos = goodbye_blue_sky.seek(ids[index]);
         // let abs_pos = seek_pos - sprite_offset;
-
         const timeline_abs_value = loop_left_abs
         goodbye_blue_sky.seek(loop_left_abs, ids[index]);
       });
-
-
     }
 
   }, 10);
@@ -301,9 +321,6 @@ timeline.addEventListener('input', () => {
   });
 
 });
-
-
-
 
 
 }
@@ -372,5 +389,8 @@ stopBtn.addEventListener('click', () => {
   });
   syncTracks();
 });
+
+
+
 
 
