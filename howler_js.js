@@ -175,7 +175,7 @@ function loadTrack(track_id) {
     return new Howl({
       preload: true,
       html5: true,
-      buffer: 8192,
+      buffer: 256,
       "src": [
         "./audio/goodbye_blue_sky.webm",
         "./audio/goodbye_blue_sky.mp3"
@@ -207,10 +207,10 @@ function loadTrack(track_id) {
     return new Howl({
       preload: true,
       html5: true,
-      buffer: 8192,
+      buffer: 256,
       "src": [
-        "/audio/jar_let_her_go_mashup.webm",
-        "/audio/jar_let_her_go_mashup.mp3"
+        "./audio/jar_let_her_go_mashup.webm",
+        "./audio/jar_let_her_go_mashup.mp3"
       ],
       "sprite": {
         "VC_JarLetHerGo_Alt1": [
