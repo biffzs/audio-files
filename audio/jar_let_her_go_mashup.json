@@ -1,0 +1,44 @@
+{
+  "src": [
+    "jar_let_her_go_mashup.webm",
+    "jar_let_her_go_mashup.mp3"
+  ],
+  "sprite": {
+    "VC_JarLetHerGo_Alt1": [
+      0,
+      195240
+    ],
+    "VC_JarLetHerGo_Alt2": [
+      197000,
+      195240
+    ],
+    "VC_JarLetHerGo_Bass1": [
+      394000,
+      195240
+    ],
+    "VC_JarLetHerGo_Bass2": [
+      591000,
+      195240
+    ],
+    "VC_JarLetHerGo_Click": [
+      788000,
+      195240
+    ],
+    "VC_JarLetHerGo_Sopran1": [
+      985000,
+      195240
+    ],
+    "VC_JarLetHerGo_Sopran2": [
+      1182000,
+      195240
+    ],
+    "VC_JarLetHerGo_Tenor1": [
+      1379000,
+      195240
+    ],
+    "VC_JarLetHerGo_Tenor2": [
+      1576000,
+      195240
+    ]
+  }
+}
