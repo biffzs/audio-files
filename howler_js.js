@@ -209,8 +209,8 @@ function loadTrack(track_id) {
       html5: true,
       buffer: 8192,
       "src": [
-        "jar_let_her_go_mashup.webm",
-        "jar_let_her_go_mashup.mp3"
+        "/audio/jar_let_her_go_mashup.webm",
+        "/audio/jar_let_her_go_mashup.mp3"
       ],
       "sprite": {
         "VC_JarLetHerGo_Alt1": [
@@ -376,7 +376,7 @@ function activateSounds() {
         //   }
         // }                                               
 
-      }, 1000);
+      }, 10);
     }
   });
 
